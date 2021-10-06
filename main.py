@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify
 
-from conexion import crear_usuario, iniciar_sesion
+from conexion import crear_usuario, get_albums, iniciar_sesion
 from conexion import insertar_album
 
 #crea una aplicación con el nombre del archivo
@@ -10,13 +10,12 @@ app = Flask(__name__)
 @app.route("/api/v1/usuarios", methods=["POST"]) #Registrar
 def usuario():
     if request.method == "POST" and request.is_json:
-            data = request.get_json()
-            print(data)
+        data = request.get_json()
 
-            if crear_usuario(data['nombre'], data['apellido'], data['correo'], data['contraseña']):
-                return jsonify({"code": "ok"})
-            else:
-                return jsonify({"code": "existe"})
+        if crear_usuario(data['nombre'], data['apellido'], data['correo'], data['contraseña']):
+            return jsonify({"code": "ok"})
+        else:
+            return jsonify({"code": "existe"})
 
 @app.route("/api/v1/albumes", methods=["GET", "POST"])
 def albumes():
@@ -27,6 +26,8 @@ def albumes():
             return jsonify({"code": "ok"})
         else:
             return jsonify({"code": "no"})
+    elif request.method == "GET":
+        return jsonify(get_albums())
 
 
 @app.route("/api/v1/sesiones", methods=["POST"]) #Inicio de sesión

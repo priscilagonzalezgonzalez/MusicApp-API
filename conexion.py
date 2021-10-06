@@ -115,6 +115,21 @@ def insertar_album(album):
             else: #No se pudo insertar el artista, no se puede crear el album
                 return False
 
+def get_albums():
+    query = "SELECT id, titulo, anio, imagen, usuarioId, artistaId FROM album"
+    cursor.execute(query)
+    albums = []
+    for row in cursor.fetchall():
+        album = {
+            'id': row[0],
+            'titulo': row[1],
+            'anio': row[2],
+            'imagen': row[3],
+            'usuarioId': row[4],
+            'artistaId': row[5]
+        }
+        albums.append(album)
+    return albums
 
 
 
