@@ -56,6 +56,16 @@ class Artistas:
             return None
     
     @classmethod
+    def get_artista_nombre(self, id):
+        query = "SELECT nombre FROM artista WHERE id = %s"
+        cursor.execute(query, (id,))
+        nombre = cursor.fetchone()
+        if nombre: #Si existe coincidencia
+            return nombre[0]
+        else: 
+            return None
+
+    @classmethod
     def existe_artista(self, nombre):
         query = "SELECT COUNT(*) FROM artista WHERE nombre = %s"
         cursor.execute(query, (nombre,))
@@ -126,17 +136,17 @@ class Albums:
 
     @classmethod
     def get_albums(self):
-        query = "SELECT id, titulo, anio, imagen, usuarioId, artistaId FROM album"
+        query = "SELECT id, titulo, anio, imagen, artistaId FROM album"
         cursor.execute(query)
         albums = []
         for row in cursor.fetchall():
+            nombre_artista = Artistas.get_artista_nombre(row[4])
             album = {
                 'id': row[0],
                 'titulo': row[1],
                 'anio': row[2],
                 'imagen': row[3],
-                'usuarioId': row[4],
-                'artistaId': row[5]
+                'artistaNombre': nombre_artista
             }
             albums.append(album)
         return albums
