@@ -44,6 +44,24 @@ class Usuarios:
         else: 
             return None, False
 
+    @classmethod
+    def get_albumes(self, id):
+        query = "SELECT id, titulo, anio, imagen, artistaId FROM album WHERE usuarioId = %s"
+        cursor.execute(query, (id,))
+        albums = []
+        for row in cursor.fetchall():
+            nombre_artista = Artistas.get_artista_nombre(row[4])
+            album = {
+                'id': row[0],
+                'titulo': row[1],
+                'anio': row[2],
+                'imagen': row[3],
+                'artistaNombre': nombre_artista
+            }
+            albums.append(album)
+        return albums
+
+
 class Artistas:
     @classmethod
     def get_artista_id(self, nombre):
@@ -135,7 +153,7 @@ class Albums:
                     return False
 
     @classmethod
-    def get_albums(self):
+    def get_albumes(self):
         query = "SELECT id, titulo, anio, imagen, artistaId FROM album"
         cursor.execute(query)
         albums = []

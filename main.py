@@ -7,7 +7,8 @@ app = Flask(__name__)
 
 
 @app.route("/api/v1/usuarios", methods=["POST"]) #Registrar
-def usuario():
+@app.route("/api/v1/usuarios/<int:id>/albumes", methods=["GET"]) 
+def usuario(id = None):
     if request.method == "POST" and request.is_json:
         try: 
             data = request.get_json()
@@ -18,7 +19,9 @@ def usuario():
                 return jsonify({"code": "existe"})
         except:
             return jsonify({"code": "error"})
-            
+    elif request.method == "GET" and id is not None:
+        return jsonify(Usuarios.get_albumes(id))
+
 @app.route("/api/v1/albumes", methods=["GET", "POST"])
 def albumes():
     if request.method == "POST" and request.is_json:
@@ -32,7 +35,7 @@ def albumes():
         except:
             return jsonify({"code": "error"})
     elif request.method == "GET":
-        return jsonify(Albums.get_albums())
+        return jsonify(Albums.get_albumes())
 
 
 @app.route("/api/v1/sesiones", methods=["POST"]) #Inicio de sesión
