@@ -18,6 +18,7 @@ def usuario():
                 return jsonify({"code": "existe"})
         except:
             return jsonify({"code": "error"})
+            
 @app.route("/api/v1/albumes", methods=["GET", "POST"])
 def albumes():
     if request.method == "POST" and request.is_json:
