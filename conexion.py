@@ -110,30 +110,20 @@ class Albums:
         #Validar si existe album
         if self.existe_album(titulo, nombre_artista):
             return False
+        elif not Artistas.existe_artista(nombre_artista):
+            if not Artistas.insertar_artista(nombre_artista):
+                return False
+
+        artista_id = Artistas.get_artista_id(nombre_artista)
+        insert_query = "INSERT INTO album (titulo, anio, imagen, usuarioId, artistaId) VALUES (%s, %s, %s, %s, %s)"
+        cursor.execute(insert_query, (titulo, anio, imagen, usuarioId, artista_id))
+        db.commit()
+
+        if cursor.rowcount:
+            return True
         else:
-            if Artistas.existe_artista(nombre_artista):
-                artista_id = Artistas.get_artista_id(nombre_artista)
-                insert_query = "INSERT INTO album (titulo, anio, imagen, usuarioId, artistaId) VALUES (%s, %s, %s, %s, %s)"
-                cursor.execute(insert_query, (titulo, anio, imagen, usuarioId, artista_id))
-                db.commit()
+            return False
 
-                if cursor.rowcount:
-                    return True
-                else:
-                    return False
-            else:
-                if Artistas.insertar_artista(nombre_artista):
-                    artista_id = Artistas.get_artista_id(nombre_artista)
-                    insert_query = "INSERT INTO album (titulo, anio, imagen, usuarioId, artistaId) VALUES (%s, %s, %s, %s, %s)"
-                    cursor.execute(insert_query, (titulo, anio, imagen, usuarioId, artista_id))
-                    db.commit()
-
-                    if cursor.rowcount:
-                        return True
-                    else:
-                        return False
-                else: #No se pudo insertar el artista, no se puede crear el album
-                    return False
 
     @classmethod
     def get_albumes(self):
