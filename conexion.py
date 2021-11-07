@@ -215,6 +215,19 @@ class Tracks:
             for row in cursor.fetchall()
         ]
 
+    @classmethod
+    def get_track(self, id:int):
+        query = "SELECT titulo, archivo, albumId FROM track WHERE id = %s"
+        cursor.execute(query, (id,))
+        row = cursor.fetchone()
+        if cursor.rowcount > 0:
+            return {
+                'titulo':row[0],
+                'archivo':row[1],
+                'albumId':row[2]
+            }
+        else:
+            return None
 
 
 
