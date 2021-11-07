@@ -82,7 +82,7 @@ class Artistas:
         cursor.execute(insertar, (nombre,))
         db.commit()
 
-        if cursor.rowcount:
+        if cursor.rowcount > 0:
             return True
         else:
             return False
@@ -119,7 +119,7 @@ class Albums:
         cursor.execute(insert_query, (titulo, anio, imagen, usuarioId, artista_id))
         db.commit()
 
-        if cursor.rowcount:
+        if cursor.rowcount > 0:
             return True
         else:
             return False
@@ -182,7 +182,7 @@ class Tracks:
         cursor.execute(query, (titulo, archivo, albumId))
         db.commit()
 
-        if cursor.rowcount:
+        if cursor.rowcount > 0:
             return True
         else:
             return False
