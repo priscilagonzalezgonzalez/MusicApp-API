@@ -169,6 +169,49 @@ class Albums:
             albums.append(album)
         return albums
 
+class Tracks:
+    @classmethod
+    def existe_track(self, titulo:str, album:int):
+        query = "SELECT COUNT(*) FROM track WHERE titulo = %s AND albumId = %s"
+        cursor.execute(query, (titulo, album))
+
+        if cursor.fetchone()[0] == 1:
+            return True
+        return False
+
+    @classmethod
+    def insertar_track(self, track):
+        titulo = track['titulo']
+        archivo = track['archivo']
+        albumId = track['albumId']
+
+        if self.existe_track(titulo, albumId) or not Albums.get_album(albumId):
+            return False
+        
+        query = "INSERT INTO track (titulo, archivo, albumId) VALUES (%s, %s, %s)"
+        cursor.execute(query, (titulo, archivo, albumId))
+        db.commit()
+
+        if cursor.rowcount:
+            return True
+        else:
+            return False
+    
+    @classmethod
+    def get_tracks(self):
+        query = "SELECT id, titulo, archivo, albumId FROM track"
+        cursor.execute(query)
+        return [
+            {
+                'id':row[0],
+                'titulo':row[1],
+                'archivo':row[2],
+                'albumId':row[3]
+            }
+            for row in cursor.fetchall()
+        ]
+
+
 
 
 
