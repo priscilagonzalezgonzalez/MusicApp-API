@@ -157,6 +157,21 @@ class Albums:
         return albums
 
     @classmethod
+    def get_album(self, id:int):
+        query = "SELECT titulo, anio, imagen, artistaId FROM album WHERE id = %s"
+        cursor.execute(query, (id,))
+        row = cursor.fetchone()
+        if cursor.rowcount > 0:
+            return {
+                'titulo': row[0],
+                'anio': row[1],
+                'imagen': row[2],
+                'artistaNombre': Artistas.get_artista_nombre(row[3])
+            }
+        else:
+            return None
+
+    @classmethod
     def get_albumes_usuario(self, id):
         query = "SELECT id, titulo, anio, imagen, artistaId FROM album WHERE usuarioId = %s"
         cursor.execute(query, (id,))
