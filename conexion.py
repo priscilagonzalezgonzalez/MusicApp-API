@@ -87,6 +87,20 @@ class Artistas:
         else:
             return False
 
+    @classmethod
+    def get_artista(self, id:int):
+        query = "SELECT biografia, nombre, imagen FROM artista WHERE id = %s"
+        cursor.execute(query, (id,))
+        row = cursor.fetchone()
+        if cursor.rowcount > 0:
+            return {
+                'biografia':row[0],
+                'nombre':row[1],
+                'imagen':row[2]
+            }
+        else:
+            return None
+
 class Albums:
     @classmethod
     def existe_album(self, titulo, artista):
