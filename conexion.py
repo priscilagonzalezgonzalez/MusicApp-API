@@ -299,4 +299,18 @@ class Resenia:
             for row in cursor.fetchall()
         ]
 
+    @classmethod
+    def get_resenias_album(self, albumId:int):
+        query = "SELECT id, texto, fecha, usuarioId FROM resenia WHERE albumId = %s"
+        cursor.execute(query, (albumId,))
+        return [
+            {
+                'id' : row[0], 
+                'texto' : row[1], 
+                'fecha' : row[2], 
+                'usuarioId' : row[3]
+            }
+            for row in cursor.fetchall()
+        ]
+
 
