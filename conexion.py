@@ -258,5 +258,30 @@ class Tracks:
         else:
             return None
 
+class Resenia:
+    @classmethod
+    def existe_resenia(self, usuarioId:int, albumId:int):
+        query = "SELECT COUNT(*) FROM resenia WHERE usuarioId = %s AND albumId = %s"
+        cursor.execute(query, (usuarioId, albumId))
 
+        if cursor.fetchone()[0] == 1:
+            return True
+        return False
+
+    @classmethod
+    def insertar_resenia(self, resenia):
+        texto = resenia['texto']
+        usuarioId = resenia['usuarioId']
+        albumId = resenia['albumId']
+
+        if self.existe_resenia(usuarioId, albumId):
+            return False
+            
+        query = "INSERT INTO resenia (texto, fecha, usuarioId, albumId) VALUES (%s, now(), %s, %s)"
+        cursor.execute(query, (texto, usuarioId, albumId))
+        db.commit()
+
+        if cursor.rowcount > 0:
+            return True
+        return False
 
