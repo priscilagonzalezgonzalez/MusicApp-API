@@ -276,7 +276,7 @@ class Resenia:
 
         if self.existe_resenia(usuarioId, albumId):
             return False
-            
+
         query = "INSERT INTO resenia (texto, fecha, usuarioId, albumId) VALUES (%s, now(), %s, %s)"
         cursor.execute(query, (texto, usuarioId, albumId))
         db.commit()
@@ -284,4 +284,19 @@ class Resenia:
         if cursor.rowcount > 0:
             return True
         return False
+
+    @classmethod
+    def get_resenias_usuario(self, usuarioId:int):
+        query = "SELECT id, texto, fecha, albumId FROM resenia WHERE usuarioId = %s"
+        cursor.execute(query, (usuarioId,))
+        return [
+            {
+                'id' : row[0], 
+                'texto' : row[1], 
+                'fecha' : row[2], 
+                'albumId' : row[3]
+            }
+            for row in cursor.fetchall()
+        ]
+
 
