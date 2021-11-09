@@ -51,6 +51,6 @@ def sesion():
             else:
                 return jsonify({"code": "noexiste"})
         except:
-            return jsonify({"code": "error"})
+            return jsonify({"code": "error"}) 
 
 app.run(debug=True)
