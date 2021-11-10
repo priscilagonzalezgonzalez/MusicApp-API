@@ -313,4 +313,16 @@ class Resenia:
             for row in cursor.fetchall()
         ]
 
+    @classmethod
+    def eliminar_resenia(self, usuarioId:int, albumId:int):
+        if not self.existe_resenia(usuarioId, albumId):
+            return False
 
+        query = "DELETE FROM resenia WHERE usuarioId = %s AND albumId = %s"
+        cursor.execute(query, (usuarioId, albumId))
+        db.commit()
+
+        if cursor.rowcount > 0:
+            return True
+        return False
+        
