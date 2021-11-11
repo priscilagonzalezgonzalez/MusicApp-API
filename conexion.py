@@ -345,3 +345,22 @@ class Track_Fav:
             for row in cursor.fetchall()
         ]
     
+class Album_Fav:
+    @classmethod
+    def get_fav_usuario(self, usuarioId:int):
+        query = "SELECT album.id, titulo, anio, imagen, artistaId, valor FROM album " \
+                "INNER JOIN fav_album ON album.id = fav_album.albumId " \
+                "WHERE fav_album.usuarioId = %s "
+
+        cursor.execute(query, (usuarioId,))
+        return [
+            {
+                'id':row[0],
+                'titulo':row[1],
+                'anio':row[2],
+                'imagen':row[3],
+                'artistaNombre': Artistas.get_artista_nombre(row[4]),
+                'valor':row[5]
+            }
+            for row in cursor.fetchall()
+        ]
