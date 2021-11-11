@@ -78,6 +78,9 @@ class Artistas:
 
     @classmethod
     def insertar_artista(self, nombre):
+        if Artistas.existe_artista(nombre):
+            return False
+            
         insertar = "INSERT INTO artista(nombre) VALUES (%s)"
         cursor.execute(insertar, (nombre,))
         db.commit()
