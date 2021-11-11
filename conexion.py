@@ -329,7 +329,7 @@ class Resenia:
 class Track_Fav:
     @classmethod
     def get_fav_usuario(self, usuarioId:int):
-        query = "SELECT track.id, titulo, archivo, albumId, valor FROM track " \
+        query = "SELECT track.id, titulo, archivo, albumId FROM track " \
                 "INNER JOIN fav_track ON track.id = fav_track.trackId " \
                 "WHERE fav_track.usuarioId = %s "
 
@@ -339,8 +339,7 @@ class Track_Fav:
                 'id':row[0],
                 'titulo':row[1],
                 'archivo':row[2],
-                'albumId':row[3],
-                'valor':row[4]
+                'albumId':row[3]
             }
             for row in cursor.fetchall()
         ]
@@ -348,7 +347,7 @@ class Track_Fav:
 class Album_Fav:
     @classmethod
     def get_fav_usuario(self, usuarioId:int):
-        query = "SELECT album.id, titulo, anio, imagen, artistaId, valor FROM album " \
+        query = "SELECT album.id, titulo, anio, imagen, artistaId FROM album " \
                 "INNER JOIN fav_album ON album.id = fav_album.albumId " \
                 "WHERE fav_album.usuarioId = %s "
 
@@ -359,8 +358,7 @@ class Album_Fav:
                 'titulo':row[1],
                 'anio':row[2],
                 'imagen':row[3],
-                'artistaNombre': Artistas.get_artista_nombre(row[4]),
-                'valor':row[5]
+                'artistaNombre': Artistas.get_artista_nombre(row[4])
             }
             for row in cursor.fetchall()
         ]
