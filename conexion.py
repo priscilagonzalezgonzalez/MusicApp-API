@@ -326,3 +326,22 @@ class Resenia:
             return True
         return False
         
+class Track_Fav:
+    @classmethod
+    def get_fav_usuario(self, usuarioId:int):
+        query = "SELECT track.id, titulo, archivo, albumId, valor FROM track " \
+                "INNER JOIN fav_track ON track.id = fav_track.trackId " \
+                "WHERE fav_track.usuarioId = %s "
+
+        cursor.execute(query, (usuarioId,))
+        return [
+            {
+                'id':row[0],
+                'titulo':row[1],
+                'archivo':row[2],
+                'albumId':row[3],
+                'valor':row[4]
+            }
+            for row in cursor.fetchall()
+        ]
+    
