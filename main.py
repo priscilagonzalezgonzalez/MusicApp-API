@@ -8,7 +8,8 @@ app = Flask(__name__)
 
 @app.route("/api/v1/usuarios", methods=["POST"]) #Registrar
 @app.route("/api/v1/usuarios/<int:id>/albumes", methods=["GET"]) 
-def usuario(id = None):
+@app.route("/api/v1/usuarios/<int:id>/albumes/<int:album_id>", methods=["PATCH"]) 
+def usuario(id = None, album_id = None):
     if request.method == "POST" and request.is_json:
         try: 
             data = request.get_json()
@@ -21,6 +22,20 @@ def usuario(id = None):
             return jsonify({"code": "error"})
     elif request.method == "GET" and id is not None:
         return jsonify(Usuarios.get_albumes(id))
+    
+    elif request.method == "PATCH" and id is not None and album_id is not None and request.is_json:
+        try:
+            data = request.get_json()
+            columna = data['columna']
+            valor = data['valor']
+
+            if Albums.modificar_album(album_id, columna, valor):
+                return jsonify({"code": "ok"})
+            else:
+                return jsonify({"code": "no"})
+        except:
+            return jsonify({"code": "error"})
+
 
 @app.route("/api/v1/albumes", methods=["GET", "POST"])
 def albumes():

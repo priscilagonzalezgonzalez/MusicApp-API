@@ -141,6 +141,16 @@ class Albums:
         else:
             return False
 
+    @classmethod
+    def modificar_album(self, album_id, columna, valor):
+        update = f"UPDATE album SET {columna} = %s WHERE id = %s"
+        cursor.execute(update, (valor, album_id))
+        db.commit()
+
+        if cursor.rowcount:
+            return True
+        else:
+            return False
 
     @classmethod
     def get_albumes(self):
