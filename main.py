@@ -53,4 +53,19 @@ def sesion():
         except:
             return jsonify({"code": "error"}) 
 
+@app.route("/api/v1/artistas", methods=["POST"])
+def artistas():
+    if request.method == "POST" and request.is_json:
+        try:
+            data = request.get_json()
+            nombre = data['nombre']
+            if Artistas.insertar_artista(nombre):
+                return jsonify({"code":"ok"})
+            else:
+                return jsonify({"code":"no"})
+        except:
+            return jsonify({"code":"error"})
+    else:
+        return jsonify({"code":"None"})
+
 app.run(debug=True)
