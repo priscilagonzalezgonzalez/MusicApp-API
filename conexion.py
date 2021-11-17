@@ -153,6 +153,17 @@ class Albums:
             return False
 
     @classmethod
+    def eliminar_album(self, album_id):
+        delete = "DELETE from album WHERE id = %s"
+        cursor.execute(delete, (album_id,))
+        db.commit()
+
+        if cursor.rowcount:
+            return True
+        else:
+            return False
+
+    @classmethod
     def get_albumes(self):
         query = "SELECT id, titulo, anio, imagen, artistaId FROM album"
         cursor.execute(query)

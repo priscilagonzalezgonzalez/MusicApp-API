@@ -8,7 +8,7 @@ app = Flask(__name__)
 
 @app.route("/api/v1/usuarios", methods=["POST"]) #Registrar
 @app.route("/api/v1/usuarios/<int:id>/albumes", methods=["GET"]) 
-@app.route("/api/v1/usuarios/<int:id>/albumes/<int:album_id>", methods=["PATCH"]) 
+@app.route("/api/v1/usuarios/<int:id>/albumes/<int:album_id>", methods=["GET", "PATCH", "DELETE"]) 
 def usuario(id = None, album_id = None):
     if request.method == "POST" and request.is_json:
         try: 
@@ -36,19 +36,25 @@ def usuario(id = None, album_id = None):
         except:
             return jsonify({"code": "error"})
 
+    elif request.method == "DELETE" and id is not None and album_id is not None:
+        if Albums.eliminar_album(album_id):
+            return jsonify({"code": "ok"})
+        else:
+            return jsonify({"code": "no"})
+
 
 @app.route("/api/v1/albumes", methods=["GET", "POST"])
 def albumes():
     if request.method == "POST" and request.is_json:
-        try:
-            data = request.get_json()
-            print(data)
-            if Albums.insertar_album(data):
-                return jsonify({"code": "ok"})
-            else:
-                return jsonify({"code": "no"})
-        except:
-            return jsonify({"code": "error"})
+        #try:
+        data = request.get_json()
+        print(data)
+        if Albums.insertar_album(data):
+            return jsonify({"code": "ok"})
+        else:
+            return jsonify({"code": "no"})
+        #except:
+            #return jsonify({"code": "error"})
     elif request.method == "GET":
         return jsonify(Albums.get_albumes())
 
