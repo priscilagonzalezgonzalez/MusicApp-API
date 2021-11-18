@@ -30,7 +30,10 @@ class Usuarios:
             insert_query = "INSERT INTO usuario(correo, contrasenia, nombre, apellido) VALUES (%s, %s, %s, %s)"
             cursor.execute(insert_query, (correo, h, nombre, apellido))
             db.commit()
-            return True
+            if cursor.rowcount > 0:
+                return True
+            else:
+                return False
 
     @classmethod
     def iniciar_sesion(self, correo, contra):
@@ -44,6 +47,16 @@ class Usuarios:
         else: 
             return None, False
 
+    @classmethod
+    def modificar_usuario(self, usuarioId, columna, valor):
+        update = f"UPDATE usuario SET {columna} = %s WHERE id = %s"
+        cursor.execute(update, (valor, usuarioId))
+        db.commit()
+
+        if cursor.rowcount:
+            return True
+        else:
+            return False
 
 class Artistas:
     @classmethod
@@ -115,7 +128,6 @@ class Albums:
         else:
             return False
 
-    #Si no existe el artista, no existe el album
     @classmethod
     def insertar_album(self, album):
         titulo = album['titulo']
@@ -281,6 +293,28 @@ class Tracks:
             }
         else:
             return None
+    
+    @classmethod
+    def modificar_track(self, track_id, columna, valor):
+        update = f"UPDATE track SET {columna} = %s WHERE id = %s"
+        cursor.execute(update, (valor, track_id))
+        db.commit()
+
+        if cursor.rowcount:
+            return True
+        else:
+            return False
+
+    @classmethod
+    def eliminar_track(self, track_id):
+        delete = "DELETE from track WHERE id = %s"
+        cursor.execute(delete, (track_id,))
+        db.commit()
+
+        if cursor.rowcount:
+            return True
+        else:
+            return False
 
 class Resenia:
     @classmethod
@@ -368,6 +402,44 @@ class Track_Fav:
             for row in cursor.fetchall()
         ]
     
+    @classmethod
+    def es_fav(self, usuarioId, trackId):
+        query = "SELECT COUNT(*) FROM fav_track WHERE usuarioId = %s and trackId = %s"
+        cursor.execute(query, (usuarioId, trackId))
+        db.commit()
+
+        if cursor.rowcount > 0:
+                return True
+            else:
+                return False
+
+    @classmethod
+    def agregar_fav(self, usuarioId, trackId):
+        if self.es_fav(usuarioId, trackId):
+            return False
+        else:
+            insert_query = "INSERT INTO fav_track(usuarioId, trackId) VALUES (%s, %s, %s)
+            cursor.execute(insert_query, (usuarioId, trackId))
+            db.commit()
+            if cursor.rowcount > 0:
+                return True
+            else:
+                return False
+    
+    @classmethod
+    def eliminar_fav(self, usuarioId, trackId):
+        if not es_fav(usuarioId, trackId):
+            return False
+        else:
+            delete = "DELETE from fav_track WHERE usuarioId = %s and trackId = %s"
+            cursor.execute(delete, (usuarioId, trackId))
+            db.commit()
+
+            if cursor.rowcount:
+                return True
+            else:
+                return False
+
 class Album_Fav:
     @classmethod
     def get_fav_usuario(self, usuarioId:int):
@@ -386,3 +458,41 @@ class Album_Fav:
             }
             for row in cursor.fetchall()
         ]
+
+    @classmethod
+    def es_fav(self, usuarioId, albumId):
+        query = "SELECT COUNT(*) FROM fav_album WHERE usuarioId = %s and albumId = %s"
+        cursor.execute(query, (usuarioId, albumId))
+        db.commit()
+
+        if cursor.rowcount > 0:
+                return True
+            else:
+                return False
+
+    @classmethod
+    def agregar_fav(self, usuarioId, albumId):
+        if self.es_fav(usuarioId, albumId):
+            return False
+        else:
+            insert_query = "INSERT INTO fav_album(usuarioId, albumId) VALUES (%s, %s, %s)
+            cursor.execute(insert_query, (usuarioId, albumId))
+            db.commit()
+            if cursor.rowcount > 0:
+                return True
+            else:
+                return False
+    
+    @classmethod
+    def eliminar_fav(self, usuarioId, albumId):
+        if not es_fav(usuarioId, albumId):
+            return False
+        else:
+            delete = "DELETE from fav_album WHERE usuarioId = %s and albumId = %s"
+            cursor.execute(delete, (usuarioId, albumId))
+            db.commit()
+
+            if cursor.rowcount:
+                return True
+            else:
+                return False
