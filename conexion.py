@@ -9,6 +9,13 @@ db = mysql.connector.connect(
 #cursor
 cursor = db.cursor()
 
+def get_nombres_columnas(nombre_tabla):
+    query = "SELECT COLUMN_NAME " \
+            "FROM INFORMATION_SCHEMA.COLUMNS " \
+            "WHERE TABLE_SCHEMA = Database() AND TABLE_NAME = %s;"
+    cursor.execute(query, (nombre_tabla,))
+    return [row[0] for row in cursor.fetchall()]
+
 class Usuarios:
     @classmethod
     def existe_usuario(self, correo):
@@ -116,6 +123,33 @@ class Artistas:
             }
         else:
             return None
+
+    @classmethod
+    def modificar_artista(self, id, columna, valor):
+        if columna not in get_nombres_columnas("artista"):
+            return False
+
+        query = f"UPDATE artista SET {columna}=%s WHERE id=%s"
+        cursor.execute(query, (valor,id))
+        db.commit()
+        if cursor.rowcount > 0:
+            return True
+        return False
+
+    @classmethod
+    def get_artistas(self):
+        query = "SELECT id, biografia, nombre, imagen FROM artista"
+        cursor.execute(query)
+        artistas = []
+        for row in cursor.fetchall():
+            artista = {
+                'id': row[0],
+                'biografia': row[1],
+                'nombre': row[2],
+                'imagen': row[3]
+            }
+            artistas.append(artista)
+        return artistas
 
 class Albums:
     @classmethod
