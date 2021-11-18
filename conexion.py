@@ -9,6 +9,13 @@ db = mysql.connector.connect(
 #cursor
 cursor = db.cursor()
 
+def get_nombres_columnas(nombre_tabla):
+    query = "SELECT COLUMN_NAME " \
+            "FROM INFORMATION_SCHEMA.COLUMNS " \
+            "WHERE TABLE_SCHEMA = Database() AND TABLE_NAME = %s;"
+    cursor.execute(query, (nombre_tabla,))
+    return [row[0] for row in cursor.fetchall()]
+
 class Usuarios:
     @classmethod
     def existe_usuario(self, correo):
