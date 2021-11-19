@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify
 
-from conexion import Usuarios, Artistas, Albums
+from conexion import Tracks, Usuarios, Artistas, Albums
 
 #crea una aplicación con el nombre del archivo
 app = Flask(__name__)
@@ -23,14 +23,17 @@ def usuario(id = None, album_id = None):
             return jsonify({"code": "error"})
 
     elif request.method == "PATCH" and id is not None and request.is_json:
-        data = request.get_json()
-        columna = data['columna']
-        valor = data['valor']
+        try:
+            data = request.get_json()
+            columna = data['columna']
+            valor = data['valor']
 
-        if Usuarios.modificar_usuario(id, columna, valor):
-            return jsonify({"code": "ok"})
-        else:
-            return jsonify({"code": "no"})
+            if Usuarios.modificar_usuario(id, columna, valor):
+                return jsonify({"code": "ok"})
+            else:
+                return jsonify({"code": "no"})
+        except:
+            return jsonify({"code":"error"})
 
     elif request.method == "GET" and id is not None:
         return jsonify(Usuarios.get_albumes(id))
@@ -59,15 +62,16 @@ def usuario(id = None, album_id = None):
 @app.route("/api/v1/albumes", methods=["GET", "POST"])
 def albumes():
     if request.method == "POST" and request.is_json:
-        #try:
-        data = request.get_json()
-        print(data)
-        if Albums.insertar_album(data):
-            return jsonify({"code": "ok"})
-        else:
-            return jsonify({"code": "no"})
-        #except:
-            #return jsonify({"code": "error"})
+        try:
+            data = request.get_json()
+            print(data)
+            if Albums.insertar_album(data):
+                return jsonify({"code": "ok"})
+            else:
+                return jsonify({"code": "no"})
+        except:
+            return jsonify({"code": "error"})
+            
     elif request.method == "GET":
         return jsonify(Albums.get_albumes())
 
@@ -104,5 +108,47 @@ def artistas():
             return jsonify({"code":"error"})
     else:
         return jsonify({"code":"None"})
+
+
+#Rutas para Tracks
+@app.route("/api/v1/tracks", methods=["POST", "GET"])
+@app.route("/api/v1/tracks/<int:id>", methods=["PATCH", "GET", "DELETE"])
+def tracks(id = None):
+    if request.method == "POST" and request.is_json:
+        try:
+            data = request.get_json()
+            if Tracks.insertar_track(data):
+                return jsonify({"code":"ok"})
+            else:
+                return jsonify({"code":"no"})
+        except:
+            return jsonify({"code":"error"})
+    
+    elif request.method == "GET":
+        return jsonify(Tracks.get_tracks())
+
+    elif request.method == "GET" and id is not None:
+        return jsonify(Tracks.get_track(id))
+    
+    elif request.method == "PATCH" and id is not None:
+        try:
+            data = request.get_json()
+            columna = data["columna"]
+            valor = data["valor"]
+            if Tracks.modificar_track(id, columna, valor):
+                return jsonify({"code":"ok"})
+            else:
+                return jsonify({"code":"no"})
+        except:
+            return jsonify({"code":"error"})
+
+    elif request.method == "DELETE" and id is not None:
+        try:
+            if Tracks.eliminar_track(id):
+                return jsonify({"code":"ok"})
+            else:
+                return jsonify({"code":"no"})
+        except:
+            return jsonify({"code":"error"})
 
 app.run(debug=True)
