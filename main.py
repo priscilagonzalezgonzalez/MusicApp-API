@@ -88,7 +88,9 @@ def sesion():
         except:
             return jsonify({"code": "error"}) 
 
+#Rutas de Artistas
 @app.route("/api/v1/artistas", methods=["GET", "POST"])
+@app.route("/api/v1/artistas/<int:id>", methods=["PATCH"])
 def artistas(id=None):
     if request.method == "POST" and request.is_json:
         try:
@@ -105,6 +107,15 @@ def artistas(id=None):
             return jsonify(Artistas.get_artistas())
         except:
             return jsonify({"code":"error"})
+    elif request.method == "PATCH" and id is not None and request.is_json:
+        data = request.get_json()
+        columna = data['columna']
+        valor = data['valor']
+
+        if Artistas.modificar_artista(id, columna, valor):
+            return jsonify({"code": "ok"})
+        else:
+            return jsonify({"code": "no"})
     return jsonify({"code":"None"})
 
 app.run(debug=True)
