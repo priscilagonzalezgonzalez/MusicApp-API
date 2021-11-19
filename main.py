@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, json, request, jsonify
 
 from conexion import Tracks, Usuarios, Artistas, Albums
 
@@ -14,7 +14,7 @@ def usuario(id = None, album_id = None):
     if request.method == "POST" and request.is_json:
         try: 
             data = request.get_json()
-
+            
             if Usuarios.crear_usuario(data['nombre'], data['apellido'], data['correo'], data['contraseña']):
                 return jsonify({"code": "ok"})
             else:
@@ -92,10 +92,10 @@ def sesion():
         except:
             return jsonify({"code": "error"}) 
 
-
 #Rutas de Artistas
-@app.route("/api/v1/artistas", methods=["POST"])
-def artistas():
+@app.route("/api/v1/artistas", methods=["GET", "POST"])
+@app.route("/api/v1/artistas/<int:id>", methods=["PATCH"])
+def artistas(id=None):
     if request.method == "POST" and request.is_json:
         try:
             data = request.get_json()
@@ -106,8 +106,21 @@ def artistas():
                 return jsonify({"code":"no"})
         except:
             return jsonify({"code":"error"})
-    else:
-        return jsonify({"code":"None"})
+    elif request.method == "GET" and id is None:
+        try:
+            return jsonify(Artistas.get_artistas())
+        except:
+            return jsonify({"code":"error"})
+    elif request.method == "PATCH" and id is not None and request.is_json:
+        data = request.get_json()
+        columna = data['columna']
+        valor = data['valor']
+
+        if Artistas.modificar_artista(id, columna, valor):
+            return jsonify({"code": "ok"})
+        else:
+            return jsonify({"code": "no"})
+    return jsonify({"code":"None"})
 
 
 #Rutas para Tracks
