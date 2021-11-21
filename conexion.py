@@ -301,6 +301,20 @@ class Tracks:
         ]
 
     @classmethod
+    def get_tracks_album(self, id):
+        query = "SELECT id, titulo, archivo, albumId FROM track WHERE albumId = %s"
+        cursor.execute(query, (id,))
+        return [
+            {
+                'id':row[0],
+                'titulo':row[1],
+                'archivo':row[2],
+                'albumId':row[3]
+            }
+            for row in cursor.fetchall()
+        ]
+
+    @classmethod
     def get_tracks_usuario(self, usuarioId:int):
         query = "SELECT id, titulo, archivo, albumId FROM track WHERE albumId IN (SELECT id FROM album WHERE usuarioId = %s)"
         cursor.execute(query, (usuarioId,))

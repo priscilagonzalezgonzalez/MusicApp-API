@@ -35,8 +35,11 @@ def usuario(id = None, album_id = None):
         except:
             return jsonify({"code":"error"})
 
-    elif request.method == "GET" and id is not None:
+    elif request.method == "GET" and id is not None and album_id is None:
         return jsonify(Usuarios.get_albumes(id))
+
+    elif request.method == "GET" and id is not None and album_id is not None:
+        return jsonify(Tracks.get_tracks_album(album_id))
     
     elif request.method == "PATCH" and id is not None and album_id is not None and request.is_json:
         try:
@@ -60,7 +63,8 @@ def usuario(id = None, album_id = None):
 
 #Rutas de Albumes
 @app.route("/api/v1/albumes", methods=["GET", "POST"])
-def albumes():
+@app.route("/api/v1/albumes/<int:id>")
+def albumes(id = None):
     if request.method == "POST" and request.is_json:
         try:
             data = request.get_json()
@@ -72,8 +76,11 @@ def albumes():
         except:
             return jsonify({"code": "error"})
             
-    elif request.method == "GET":
+    elif request.method == "GET" and id is None:
         return jsonify(Albums.get_albumes())
+
+    elif request.method == "GET" and id is not None:
+        return jsonify(Tracks.get_tracks_album(id))
 
 
 #Rutas de Sesiones
