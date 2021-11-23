@@ -14,13 +14,13 @@ def usuario(id = None, album_id = None):
     if request.method == "POST" and request.is_json:
         try: 
             data = request.get_json()
-            
-            if Usuarios.crear_usuario(data['nombre'], data['apellido'], data['correo'], data['contraseña']):
-                return jsonify({"code": "ok"})
+            id, ok = Usuarios.crear_usuario(data['nombre'], data['apellido'], data['correo'], data['contraseña'])
+            if ok:
+                return jsonify({"code": "ok", "id": id})
             else:
-                return jsonify({"code": "existe"})
+                return jsonify({"code": "noexiste"})
         except:
-            return jsonify({"code": "error"})
+            return jsonify({"code": "error"}) 
 
     elif request.method == "PATCH" and id is not None and request.is_json:
         try:

@@ -28,6 +28,20 @@ class Usuarios:
             return False
 
     @classmethod
+    def get_id_usuario(self, correo, contra):
+        if self.existe_usuario(correo):
+            h = hashlib.new('sha256', bytes(contra, 'utf-8'))
+            h = h.hexdigest()
+            query = "SELECT id FROM usuario WHERE correo = %s AND contrasenia = %s"
+            cursor.execute(query, (correo, h))
+            id = cursor.fetchone()
+            if id: #Si existe coincidencia
+                return id[0], True
+            else: 
+                return None, False
+
+
+    @classmethod
     def crear_usuario(self, nombre, apellido, correo, contra):
         if self.existe_usuario(correo):
             return False
@@ -38,9 +52,9 @@ class Usuarios:
             cursor.execute(insert_query, (correo, h, nombre, apellido))
             db.commit()
             if cursor.rowcount > 0:
-                return True
+                return self.get_id_usuario(correo, contra)
             else:
-                return False
+                return None, False
 
     @classmethod
     def iniciar_sesion(self, correo, contra):
