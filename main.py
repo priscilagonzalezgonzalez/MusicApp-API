@@ -22,7 +22,7 @@ def usuario(id = None, album_id = None):
         except:
             return jsonify({"code": "error"})
 
-    elif request.method == "PATCH" and id is not None and request.is_json:
+    elif request.method == "PATCH" and id is not None and album_id is None and request.is_json:
         try:
             data = request.get_json()
             columna = data['columna']
