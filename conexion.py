@@ -272,6 +272,21 @@ class Albums:
             albums.append(album)
         return albums
 
+    @classmethod
+    def get_albumes_artista(self, artistaId):
+        query = "SELECT id, titulo, anio, imagen FROM album WHERE artistaId = %s"
+        cursor.execute(query, (artistaId,))
+        albums = []
+        for row in cursor.fetchall():
+            album = {
+                'id': row[0],
+                'titulo': row[1],
+                'anio': row[2],
+                'imagen': row[3]
+            }
+            albums.append(album)
+        return albums
+
 class Tracks:
     @classmethod
     def existe_track(self, titulo:str, albumId:int):
