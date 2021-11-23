@@ -64,7 +64,7 @@ def usuario(id = None, album_id = None):
 #Rutas de Albumes
 @app.route("/api/v1/albumes", methods=["GET", "POST"])
 @app.route("/api/v1/albumes/<int:id>")
-def albumes(id = None):
+def albumes(id = None, artistaId=None):
     if request.method == "POST" and request.is_json:
         try:
             data = request.get_json()
@@ -82,6 +82,11 @@ def albumes(id = None):
     elif request.method == "GET" and id is not None:
         return jsonify(Tracks.get_tracks_album(id))
 
+#Ruta albumes de un artista
+@app.route("/api/v1/artistas/<int:artistaId>/albums", methods=["GET"])
+def albumes_artista(artistaId):
+    if request.method == "GET" and artistaId is not None:
+        return jsonify(Albums.get_albumes_artista(artistaId))
 
 #Rutas de Sesiones
 @app.route("/api/v1/sesiones", methods=["POST"]) #Inicio de sesión
