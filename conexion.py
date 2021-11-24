@@ -320,14 +320,22 @@ class Tracks:
     
     @classmethod
     def get_tracks(self):
-        query = "SELECT id, titulo, archivo, albumId FROM track"
+        query = "SELECT track.id, track.titulo, track.archivo, album.id, album.titulo, artista.nombre " \
+                "FROM track " \
+                "INNER JOIN album " \
+                    "ON track.albumId = album.id " \
+                "INNER JOIN artista " \
+                    "ON album.artistaId = artista.id " \
+
         cursor.execute(query)
         return [
             {
                 'id':row[0],
                 'titulo':row[1],
                 'archivo':row[2],
-                'albumId':row[3]
+                'albumId':row[3],
+                'albumTitulo':row[4],
+                'artista':row[5]
             }
             for row in cursor.fetchall()
         ]
@@ -486,7 +494,6 @@ class Track_Fav:
     def es_fav(self, usuarioId, trackId):
         query = "SELECT COUNT(*) FROM fav_track WHERE usuarioId = %s and trackId = %s"
         cursor.execute(query, (usuarioId, trackId))
-        print("HEEEELLOOOO \n")
         
         if cursor.fetchone()[0] > 0:
             return True
