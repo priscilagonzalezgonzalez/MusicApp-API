@@ -9,12 +9,15 @@ db = mysql.connector.connect(
 #cursor
 cursor = db.cursor()
 
-def get_nombres_columnas(nombre_tabla):
-    query = "SELECT COLUMN_NAME " \
+
+def existe_columna(nombre_tabla, nombre_columna):
+    query = "SELECT count(*) " \
             "FROM INFORMATION_SCHEMA.COLUMNS " \
-            "WHERE TABLE_SCHEMA = Database() AND TABLE_NAME = %s;"
-    cursor.execute(query, (nombre_tabla,))
-    return [row[0] for row in cursor.fetchall()]
+            "WHERE TABLE_SCHEMA = Database() AND TABLE_NAME = %s AND COLUMN_NAME = %s;"
+    cursor.execute(query, (nombre_tabla, nombre_columna))
+    if cursor.fetchone()[0] == 1:
+        return True
+    return False
 
 class Usuarios:
     @classmethod
@@ -140,7 +143,7 @@ class Artistas:
 
     @classmethod
     def modificar_artista(self, id, columna, valor):
-        if columna not in get_nombres_columnas("artista"):
+        if not existe_columna("artista", columna):
             return False
 
         query = f"UPDATE artista SET {columna}=%s WHERE id=%s"
