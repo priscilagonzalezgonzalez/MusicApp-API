@@ -489,7 +489,7 @@ class Track_Fav:
         db.commit()
 
         if cursor.rowcount > 0:
-                return True
+            return True
         else:
             return False
 
@@ -546,7 +546,7 @@ class Album_Fav:
         db.commit()
 
         if cursor.rowcount > 0:
-                return True
+            return True
         else:
             return False
 
