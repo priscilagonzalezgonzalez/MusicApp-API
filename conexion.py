@@ -486,9 +486,9 @@ class Track_Fav:
     def es_fav(self, usuarioId, trackId):
         query = "SELECT COUNT(*) FROM fav_track WHERE usuarioId = %s and trackId = %s"
         cursor.execute(query, (usuarioId, trackId))
-        db.commit()
-
-        if cursor.rowcount > 0:
+        print("HEEEELLOOOO \n")
+        
+        if cursor.fetchone()[0] > 0:
             return True
         else:
             return False
@@ -543,9 +543,8 @@ class Album_Fav:
     def es_fav(self, usuarioId, albumId):
         query = "SELECT COUNT(*) FROM fav_album WHERE usuarioId = %s and albumId = %s"
         cursor.execute(query, (usuarioId, albumId))
-        db.commit()
 
-        if cursor.rowcount > 0:
+        if cursor.fetchone() > 0:
             return True
         else:
             return False
