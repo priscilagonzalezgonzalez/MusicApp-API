@@ -1,6 +1,6 @@
 from flask import Flask, json, request, jsonify
 
-from conexion import Tracks, Usuarios, Artistas, Albums
+from conexion import Track_Fav, Tracks, Usuarios, Artistas, Albums
 
 #crea una aplicación con el nombre del archivo
 app = Flask(__name__)
@@ -60,11 +60,52 @@ def usuario(id = None, album_id = None):
         else:
             return jsonify({"code": "no"})
 
+# Rutas para las caciones favoritas del usuario
+@app.route("/api/v1/usuario/<int:usuarioId>/tracks_fav", methods=["POST", "GET"])
+@app.route("/api/v1/usuario/<int:usuarioId>/tracks_fav/<int:trackId>", methods=["POST", "DELETE"])
+def canciones_favoritas(usuarioId=None, trackId=None):
+    # Obtiene todas las canciones favoritas del usuario
+    if request.method == "GET" and usuarioId is not None:
+        try:
+            return jsonify(Track_Fav.get_fav_usuario(usuarioId))
+        except:
+            return jsonify({"code": "error"})
+    # Agrega una canción favorita por medio de un json
+    elif request.method == "POST" and usuarioId is not None and request.is_json:
+        try:
+            data = request.get_json()
+            trackId = data["trackId"]
+            if Track_Fav.agregar_fav(usuarioId, trackId):
+                return jsonify({"code": "ok"})
+            else:
+                return jsonify({"code": "no"})
+        except:
+            return jsonify({"code": "error"})
+    # Agrega una canción favorita por solo la URL
+    elif request.method == "POST" and usuarioId is not None and trackId is not None:
+        try:
+            if Track_Fav.agregar_fav(usuarioId, trackId):
+                return jsonify({"code": "ok"})
+            else:
+                return jsonify({"code": "no"})
+        except:
+            return jsonify({"code": "error"})
+    # Elimina una cancion favorita
+    elif request.method == "DELETE" and usuarioId is not None and trackId is not None:
+        try:
+            if Track_Fav.eliminar_fav(usuarioId, trackId):
+                return jsonify({"code": "ok"})
+            else:
+                return jsonify({"code": "no"})
+        except:
+            return jsonify({"code": "error"})
+    # Si no se puede procesar la solicitud, devuelve:
+    return jsonify({"code": "none"})
 
 #Rutas de Albumes
 @app.route("/api/v1/albumes", methods=["GET", "POST"])
 @app.route("/api/v1/albumes/<int:id>", methods=["GET"])
-def albumes(id = None, artistaId=None):
+def albumes(id = None):
     if request.method == "POST" and request.is_json:
         try:
             data = request.get_json()
@@ -111,7 +152,7 @@ def sesion():
 
 #Rutas de Artistas
 @app.route("/api/v1/artistas", methods=["GET", "POST"])
-@app.route("/api/v1/artistas/<int:id>", methods=["PATCH"])
+@app.route("/api/v1/artistas/<int:id>", methods=["GET", "PATCH"])
 def artistas(id=None):
     if request.method == "POST" and request.is_json:
         try:
@@ -123,11 +164,20 @@ def artistas(id=None):
                 return jsonify({"code":"no"})
         except:
             return jsonify({"code":"error"})
+            
     elif request.method == "GET" and id is None:
         try:
             return jsonify(Artistas.get_artistas())
         except:
             return jsonify({"code":"error"})
+
+    elif request.method == "GET" and id is not None:
+        artista = Artistas.get_artista(id)
+        if artista:
+            return jsonify(artista)
+        else:
+            return jsonify({"code":f"artist with id = {id} does not exist"})
+
     elif request.method == "PATCH" and id is not None and request.is_json:
         data = request.get_json()
         columna = data['columna']
@@ -137,6 +187,7 @@ def artistas(id=None):
             return jsonify({"code": "ok"})
         else:
             return jsonify({"code": "no"})
+
     return jsonify({"code":"None"})
 
 
