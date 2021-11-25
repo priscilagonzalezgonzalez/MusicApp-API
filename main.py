@@ -1,6 +1,6 @@
 from flask import Flask, json, request, jsonify
 
-from conexion import Track_Fav, Tracks, Usuarios, Artistas, Albums, Album_Fav
+from conexion import Resenia, Track_Fav, Tracks, Usuarios, Artistas, Albums, Album_Fav
 
 #crea una aplicación con el nombre del archivo
 app = Flask(__name__)
@@ -163,6 +163,43 @@ def albumes(id = None):
 
     elif request.method == "GET" and id is not None:
         return jsonify(Albums.get_album(id))
+
+# Rutas reseñas de un album
+@app.route("/api/v1/resenias", methods=["POST"])
+@app.route("/api/v1/albumes/<int:albumId>/resenias", methods=["GET"])
+def resenias_album(albumId=None):
+    # Obtiene todas las reseñas de un album
+    if request.method == "GET" and albumId is not None:
+        return jsonify(Resenia.get_resenias_album(albumId))
+    # Agrega una resenia
+    elif request.method == "POST" and request.is_json:
+        try:
+            data = request.get_json()
+            if Resenia.insertar_resenia(data):
+                return jsonify({"code": "ok"})
+            else:
+                return jsonify({"code": "no"})
+        except:
+            return jsonify({"code": "error"})
+    return jsonify({"code": "None"})
+
+# Rutas reseñas de un usuario
+@app.route("/api/v1/usuarios/<int:usuarioId>/resenias", methods=["GET"])
+@app.route("/api/v1/usuarios/<int:usuarioId>/resenias/<int:albumId>", methods=["DELETE"])
+def resenias_usuario(usuarioId=None, albumId=None):
+    # Obtiene todas las reseñas de un usuario
+    if request.method == "GET" and usuarioId is not None:
+        return jsonify(Resenia.get_resenias_usuario(usuarioId))
+    # Elimina una resenia
+    elif request.method == "DELETE" and usuarioId is not None and albumId is not None:
+        try:
+            if Resenia.eliminar_resenia(usuarioId, albumId):
+                return jsonify({"code": "ok"})
+            else:
+                return jsonify({"code": "no"})
+        except:
+            return jsonify({"code": "error"})
+    return jsonify({"code": "None"})
 
 #Ruta para tracks de album
 @app.route("/api/v1/albumes/<int:id>/tracks", methods=["GET"])

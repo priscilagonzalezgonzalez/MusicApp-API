@@ -436,28 +436,40 @@ class Resenia:
 
     @classmethod
     def get_resenias_usuario(self, usuarioId:int):
-        query = "SELECT id, texto, fecha, albumId FROM resenia WHERE usuarioId = %s"
+        query = "SELECT resenia.id, resenia.texto, resenia.fecha, album.id, album.titulo, artista.nombre FROM resenia " \
+                "INNER JOIN album ON resenia.albumId = album.id " \
+                "INNER JOIN artista ON album.artistaId = artista.id " \
+                "WHERE resenia.usuarioId = %s " 
+
         cursor.execute(query, (usuarioId,))
         return [
             {
                 'id' : row[0], 
                 'texto' : row[1], 
                 'fecha' : row[2], 
-                'albumId' : row[3]
+                'album' : {
+                    'id' : row[3],
+                    'titulo' : row[4],
+                    'artistaNombre' : row[5]
+                }
             }
             for row in cursor.fetchall()
         ]
 
     @classmethod
     def get_resenias_album(self, albumId:int):
-        query = "SELECT id, texto, fecha, usuarioId FROM resenia WHERE albumId = %s"
+        query = "SELECT resenia.id, resenia.texto, resenia.fecha, usuario.nombre, usuario.apellido " \
+                "FROM resenia " \
+                "INNER JOIN usuario ON resenia.usuarioId = usuario.id " \
+                "WHERE resenia.albumId = %s "
+
         cursor.execute(query, (albumId,))
         return [
             {
                 'id' : row[0], 
                 'texto' : row[1], 
                 'fecha' : row[2], 
-                'usuarioId' : row[3]
+                'usuario' : f"{row[3]} {row[4]}"
             }
             for row in cursor.fetchall()
         ]
