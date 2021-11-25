@@ -205,12 +205,12 @@ class Albums:
             return False
 
     @classmethod
-    def modificar_album(self, album_id, columna, valor):
+    def modificar_album(self, usuarioId, album_id, columna, valor):
         if not existe_columna("album", columna):
             return False
 
-        update = f"UPDATE album SET {columna} = %s WHERE id = %s"
-        cursor.execute(update, (valor, album_id))
+        update = f"UPDATE album SET {columna} = %s WHERE id = %s and usuarioId = %s"
+        cursor.execute(update, (valor, album_id, usuarioId))
         db.commit()
 
         if cursor.rowcount:

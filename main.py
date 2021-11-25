@@ -47,7 +47,7 @@ def usuario(id = None, album_id = None):
             columna = data['columna']
             valor = data['valor']
 
-            if Albums.modificar_album(album_id, columna, valor):
+            if Albums.modificar_album(id, album_id, columna, valor):
                 return jsonify({"code": "ok"})
             else:
                 return jsonify({"code": "no"})
