@@ -55,7 +55,7 @@ def usuario(id = None, album_id = None):
             return jsonify({"code": "error"})
 
     elif request.method == "DELETE" and id is not None and album_id is not None:
-        if Albums.eliminar_album(album_id):
+        if Albums.eliminar_album(id, album_id):
             return jsonify({"code": "ok"})
         else:
             return jsonify({"code": "no"})

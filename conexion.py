@@ -219,9 +219,9 @@ class Albums:
             return False
 
     @classmethod
-    def eliminar_album(self, album_id):
-        delete = "DELETE from album WHERE id = %s"
-        cursor.execute(delete, (album_id,))
+    def eliminar_album(self, usuarioId, album_id):
+        delete = "DELETE from album WHERE id = %s and usuarioId = %s"
+        cursor.execute(delete, (album_id, usuarioId))
         db.commit()
 
         if cursor.rowcount:
