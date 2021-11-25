@@ -1,6 +1,6 @@
 from flask import Flask, json, request, jsonify
 
-from conexion import Track_Fav, Tracks, Usuarios, Artistas, Albums
+from conexion import Track_Fav, Tracks, Usuarios, Artistas, Albums, Album_Fav
 
 #crea una aplicación con el nombre del archivo
 app = Flask(__name__)
@@ -94,6 +94,48 @@ def canciones_favoritas(usuarioId=None, trackId=None):
     elif request.method == "DELETE" and usuarioId is not None and trackId is not None:
         try:
             if Track_Fav.eliminar_fav(usuarioId, trackId):
+                return jsonify({"code": "ok"})
+            else:
+                return jsonify({"code": "no"})
+        except:
+            return jsonify({"code": "error"})
+    # Si no se puede procesar la solicitud, devuelve:
+    return jsonify({"code": "none"})
+
+# Rutas para los albumes favoritos del usuario
+@app.route("/api/v1/usuario/<int:usuarioId>/albumes_fav", methods=["POST", "GET"])
+@app.route("/api/v1/usuario/<int:usuarioId>/albumes_fav/<int:albumId>", methods=["POST", "DELETE"])
+def albumes_favoritos(usuarioId=None, albumId=None):
+    # Obtiene todos los albumes favoritos del usuario
+    if request.method == "GET" and usuarioId is not None:
+        try:
+            return jsonify(Album_Fav.get_fav_usuario(usuarioId))
+        except:
+            return jsonify({"code": "error"})
+    # Agrega un album a favorito por medio de un json
+    elif request.method == "POST" and usuarioId is not None and request.is_json:
+        try:
+            data = request.get_json()
+            albumId = data["albumId"]
+            if Album_Fav.agregar_fav(usuarioId, albumId):
+                return jsonify({"code": "ok"})
+            else:
+                return jsonify({"code": "no"})
+        except:
+            return jsonify({"code": "error"})
+    # Agrega un album favorito por solo la URL
+    elif request.method == "POST" and usuarioId is not None and albumId is not None:
+        try:
+            if Album_Fav.agregar_fav(usuarioId, albumId):
+                return jsonify({"code": "ok"})
+            else:
+                return jsonify({"code": "no"})
+        except:
+            return jsonify({"code": "error"})
+    # Elimina una album favorito
+    elif request.method == "DELETE" and usuarioId is not None and albumId is not None:
+        try:
+            if Album_Fav.eliminar_fav(usuarioId, albumId):
                 return jsonify({"code": "ok"})
             else:
                 return jsonify({"code": "no"})

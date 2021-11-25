@@ -551,7 +551,7 @@ class Album_Fav:
         query = "SELECT COUNT(*) FROM fav_album WHERE usuarioId = %s and albumId = %s"
         cursor.execute(query, (usuarioId, albumId))
 
-        if cursor.fetchone() > 0:
+        if cursor.fetchone()[0] > 0:
             return True
         else:
             return False
