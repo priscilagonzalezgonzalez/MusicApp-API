@@ -206,6 +206,9 @@ class Albums:
 
     @classmethod
     def modificar_album(self, album_id, columna, valor):
+        if not existe_columna("album", columna):
+            return False
+
         update = f"UPDATE album SET {columna} = %s WHERE id = %s"
         cursor.execute(update, (valor, album_id))
         db.commit()
