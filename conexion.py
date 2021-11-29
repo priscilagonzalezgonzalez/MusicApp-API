@@ -8,7 +8,7 @@ db = mysql.connector.connect(
     database='musicapp')
 
 #cursor
-cursor = db.cursor()
+cursor = db.cursor(buffered=True)
 
 
 def existe_columna(nombre_tabla, nombre_columna):
@@ -349,9 +349,7 @@ class Tracks:
 
     @classmethod
     def get_tracks_album(self, id):
-        query = "SELECT id, titulo, archivo " \
-            "from track " \
-            "WHERE albumId = %s"
+        query = "SELECT id, titulo, archivo from track WHERE albumId = %s"
         cursor.execute(query, (id,))
         tracks = []
         for row in cursor.fetchall():
