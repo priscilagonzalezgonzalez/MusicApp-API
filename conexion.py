@@ -248,8 +248,10 @@ class Albums:
         return albums
 
     @classmethod
-    def get_album(self, id:int):
-        query = "SELECT titulo, anio, imagen, artistaId, usuarioId FROM album WHERE id = %s"
+    def get_album(self, id):
+        query = "SELECT album.titulo, album.anio, album.imagen, album.usuarioId, artista.nombre FROM album " \
+                "INNER JOIN artista ON album.artistaId = artista.id " \
+                "WHERE album.id = %s "
         cursor.execute(query, (id,))
         row = cursor.fetchone()
         if cursor.rowcount > 0:
@@ -257,8 +259,8 @@ class Albums:
                 'titulo': row[0],
                 'anio': row[1],
                 'imagen': row[2],
-                'artistaNombre': Artistas.get_artista_nombre(row[3]),
-                'usuarioId': row[4]
+                'usuarioId': row[3],
+                'artistaNombre': row[4]
             }
         else:
             return None
@@ -349,7 +351,7 @@ class Tracks:
     def get_tracks_album(self, id):
         query = "SELECT id, titulo, archivo " \
             "from track " \
-            "WHERE track.albumId = %s"
+            "WHERE albumId = %s"
         cursor.execute(query, (id,))
         tracks = []
         for row in cursor.fetchall():
@@ -358,7 +360,6 @@ class Tracks:
                 'titulo':row[1],
                 'archivo':row[2]
             }
-    
             tracks.append(track)
         return tracks
 
