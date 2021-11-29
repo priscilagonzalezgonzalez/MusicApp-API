@@ -5,7 +5,7 @@ from conexion import Resenia, Track_Fav, Tracks, Usuarios, Artistas, Albums, Alb
 #crea una aplicación con el nombre del archivo
 app = Flask(__name__)
 
-#Rutas de Usuario
+#Rutas de Usuario y sus álbumes
 @app.route("/api/v1/usuarios", methods=["POST"]) 
 @app.route("/api/v1/usuarios/<int:id>", methods=["PATCH"]) 
 @app.route("/api/v1/usuarios/<int:id>/albumes", methods=["GET"]) 
@@ -36,7 +36,7 @@ def usuario(id = None, album_id = None):
             return jsonify({"code":"error"})
 
     elif request.method == "GET" and id is not None and album_id is None:
-        return jsonify(Usuarios.get_albumes(id))
+        return jsonify(Albums.get_albumes_usuario(id));
 
     elif request.method == "GET" and id is not None and album_id is not None:
         return jsonify(Tracks.get_tracks_album(album_id))
@@ -204,8 +204,14 @@ def resenias_usuario(usuarioId=None, albumId=None):
 #Ruta para tracks de album
 @app.route("/api/v1/albumes/<int:id>/tracks", methods=["GET"])
 def albumes_tracks(id = None):
-    if request.method == "GET":
+    if request.method == "GET" and id is not None:
         return jsonify(Tracks.get_tracks_album(id))
+
+#Ruta para tracks de usuario
+@app.route("/api/v1/usuario/<int:id>/tracks", methods = ["GET"])
+def tracks_usuario(id = None):
+    if request.method == "GET" and id is not None:
+        return jsonify(Tracks.get_tracks_usuario(id))
 
 #Ruta albumes de un artista
 @app.route("/api/v1/artistas/<int:artistaId>/albums", methods=["GET"])
@@ -243,7 +249,7 @@ def artistas(id=None):
                 return jsonify({"code":"no"})
         except:
             return jsonify({"code":"error"})
-            
+             
     elif request.method == "GET" and id is None:
         try:
             return jsonify(Artistas.get_artistas())
@@ -265,9 +271,9 @@ def artistas(id=None):
         if Artistas.modificar_artista(id, columna, valor):
             return jsonify({"code": "ok"})
         else:
-            return jsonify({"code": "no"})
+            return jsonify({"code": "no"}) 
 
-    return jsonify({"code":"None"})
+"""     return jsonify({"code":"None"}) """
 
 
 #Rutas para Tracks

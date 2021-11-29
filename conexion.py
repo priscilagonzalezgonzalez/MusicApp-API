@@ -1,3 +1,4 @@
+""" from main import tracks """
 import mysql.connector
 import hashlib
 
@@ -248,7 +249,7 @@ class Albums:
 
     @classmethod
     def get_album(self, id:int):
-        query = "SELECT titulo, anio, imagen, artistaId FROM album WHERE id = %s"
+        query = "SELECT titulo, anio, imagen, artistaId, usuarioId FROM album WHERE id = %s"
         cursor.execute(query, (id,))
         row = cursor.fetchone()
         if cursor.rowcount > 0:
@@ -256,7 +257,8 @@ class Albums:
                 'titulo': row[0],
                 'anio': row[1],
                 'imagen': row[2],
-                'artistaNombre': Artistas.get_artista_nombre(row[3])
+                'artistaNombre': Artistas.get_artista_nombre(row[3]),
+                'usuarioId': row[4]
             }
         else:
             return None
@@ -345,17 +347,20 @@ class Tracks:
 
     @classmethod
     def get_tracks_album(self, id):
-        query = "SELECT id, titulo, archivo, albumId FROM track WHERE albumId = %s"
+        query = "SELECT id, titulo, archivo " \
+            "from track " \
+            "WHERE track.albumId = %s"
         cursor.execute(query, (id,))
-        return [
-            {
+        tracks = []
+        for row in cursor.fetchall():
+            track = {
                 'id':row[0],
                 'titulo':row[1],
-                'archivo':row[2],
-                'albumId':row[3]
+                'archivo':row[2]
             }
-            for row in cursor.fetchall()
-        ]
+    
+            tracks.append(track)
+        return tracks
 
     @classmethod
     def get_tracks_usuario(self, usuarioId:int):
