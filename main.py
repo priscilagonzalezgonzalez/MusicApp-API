@@ -104,10 +104,10 @@ def canciones_favoritas(usuarioId=None, trackId=None):
 
 # Rutas para los albumes favoritos del usuario
 @app.route("/api/v1/usuario/<int:usuarioId>/albumes_fav", methods=["POST", "GET"])
-@app.route("/api/v1/usuario/<int:usuarioId>/albumes_fav/<int:albumId>", methods=["POST", "DELETE"])
+@app.route("/api/v1/usuario/<int:usuarioId>/albumes_fav/<int:albumId>", methods=["POST", "DELETE", "GET"])
 def albumes_favoritos(usuarioId=None, albumId=None):
     # Obtiene todos los albumes favoritos del usuario
-    if request.method == "GET" and usuarioId is not None:
+    if request.method == "GET" and usuarioId is not None and albumId is None:
         try:
             return jsonify(Album_Fav.get_fav_usuario(usuarioId))
         except:
@@ -136,6 +136,14 @@ def albumes_favoritos(usuarioId=None, albumId=None):
     elif request.method == "DELETE" and usuarioId is not None and albumId is not None:
         try:
             if Album_Fav.eliminar_fav(usuarioId, albumId):
+                return jsonify({"code": "ok"})
+            else:
+                return jsonify({"code": "no"})
+        except:
+            return jsonify({"code": "error"})
+    elif request.method == "GET" and usuarioId is not None and albumId is not None:
+        try:
+            if Album_Fav.es_fav(usuarioId, albumId):
                 return jsonify({"code": "ok"})
             else:
                 return jsonify({"code": "no"})
