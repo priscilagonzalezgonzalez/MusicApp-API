@@ -212,17 +212,26 @@ class Artistas:
             db = connector()
             cursor = db.cursor()
         
-            query = "SELECT biografia, nombre, imagen FROM artista WHERE id = %s"
+            query = "SELECT artista.biografia, artista.nombre, artista.imagen, album.usuarioId " \
+                    "FROM artista " \
+                    "INNER JOIN album ON artista.id = album.artistaId " \
+                    "WHERE artista.id = %s " \
+                    "LIMIT 1"
+
             cursor.execute(query, (id,))
             row = cursor.fetchone()
             if cursor.rowcount > 0:
                 return {
                     'biografia':row[0],
                     'nombre':row[1],
-                    'imagen':row[2]
+                    'imagen':row[2],
+                    'usuarioId':row[3]
                 }
             else:
                 return None
+        except mysql.connector.Error as e:
+            print(f"Error at <get_artista>\n    query = {query}\n{str(e)}")
+            return False
         finally:
             if db:
                 cursor.close()
@@ -266,6 +275,35 @@ class Artistas:
                 }
                 artistas.append(artista)
             return artistas
+        finally:
+            if db:
+                cursor.close()
+                db.close()
+    
+    @classmethod
+    def get_artistas_usuario(self, usuarioId):
+        try:
+            db = connector()
+            cursor = db.cursor()
+
+            query = "SELECT id, biografia, nombre, imagen " \
+                    "FROM artista WHERE artista.id IN (" \
+                        "SELECT artistaId FROM album WHERE usuarioId = %s)" \
+
+            cursor.execute(query, (usuarioId,))
+            artistas = []
+            for row in cursor.fetchall():
+                artista = {
+                    'id': row[0],
+                    'biografia': row[1],
+                    'nombre': row[2],
+                    'imagen': row[3]
+                }
+                artistas.append(artista)
+            return artistas
+        except mysql.connector.Error as e:
+            print(f"Error at <get_artistas_usuarios>\n    query = {query}\n{str(e)}")
+            return False
         finally:
             if db:
                 cursor.close()
