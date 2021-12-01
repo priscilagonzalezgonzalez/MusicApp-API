@@ -221,6 +221,12 @@ def tracks_usuario(id = None):
     if request.method == "GET" and id is not None:
         return jsonify(Tracks.get_tracks_usuario(id))
 
+#Ruta para artistas de un usuario
+@app.route("/api/v1/usuario/<int:id>/artistas", methods = ["GET"])
+def artistas_usuario(id = None):
+    if request.method == "GET" and id is not None:
+        return jsonify(Artistas.get_artistas_usuario(id))
+
 #Ruta albumes de un artista
 @app.route("/api/v1/artistas/<int:artistaId>/albums", methods=["GET"])
 def albumes_artista(artistaId):
