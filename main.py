@@ -252,6 +252,7 @@ def sesion():
 #Rutas de Artistas
 @app.route("/api/v1/artistas", methods=["GET", "POST"])
 @app.route("/api/v1/artistas/<int:id>", methods=["GET", "PATCH"])
+@app.route("/api/v1/artistas/<string:id>", methods=["GET"])
 def artistas(id=None):
     if request.method == "POST" and request.is_json:
         try:
@@ -271,11 +272,16 @@ def artistas(id=None):
             return jsonify({"code":"error"})
 
     elif request.method == "GET" and id is not None:
+        if type(id) == str:
+            id = Artistas.get_artista_id(id)
+            if id is None:
+                return jsonify({"code":"noexiste"})
+
         artista = Artistas.get_artista(id)
         if artista:
             return jsonify(artista)
         else:
-            return jsonify({"code":f"artist with id = {id} does not exist"})
+            return jsonify({"code":"noexiste"})
 
     elif request.method == "PATCH" and id is not None and request.is_json:
         data = request.get_json()
