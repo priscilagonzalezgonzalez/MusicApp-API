@@ -212,7 +212,7 @@ class Artistas:
             db = connector()
             cursor = db.cursor()
         
-            query = "SELECT artista.biografia, artista.nombre, artista.imagen, album.usuarioId " \
+            query = "SELECT artista.id, artista.biografia, artista.nombre, artista.imagen, album.usuarioId " \
                     "FROM artista " \
                     "INNER JOIN album ON artista.id = album.artistaId " \
                     "WHERE artista.id = %s " \
@@ -222,10 +222,11 @@ class Artistas:
             row = cursor.fetchone()
             if cursor.rowcount > 0:
                 return {
-                    'biografia':row[0],
-                    'nombre':row[1],
-                    'imagen':row[2],
-                    'usuarioId':row[3]
+                    'id':row[0],
+                    'biografia':row[1],
+                    'nombre':row[2],
+                    'imagen':row[3],
+                    'usuarioId':row[4]
                 }
             else:
                 return None
@@ -603,14 +604,19 @@ class Tracks:
             db = connector()
             cursor = db.cursor()
         
-            query = "SELECT id, titulo, archivo, albumId FROM track WHERE albumId IN (SELECT id FROM album WHERE usuarioId = %s)"
+            # query = "SELECT id, titulo, archivo, albumId FROM track WHERE albumId IN (SELECT id FROM album WHERE usuarioId = %s)"
+            query = "SELECT track.id, track.titulo, archivo, albumId, album.titulo, album.imagen FROM track " \
+                    "INNER JOIN album ON track.albumId = album.id "\
+                    "WHERE album.usuarioId = %s "
             cursor.execute(query, (usuarioId,))
             return [
                 {
                     'id':row[0],
                     'titulo':row[1],
                     'archivo':row[2],
-                    'albumId':row[3]
+                    'albumId':row[3],
+                    'albumTitulo':row[4],
+                    'imagen':row[5]
                 }
                 for row in cursor.fetchall()
             ]
@@ -806,8 +812,9 @@ class Track_Fav:
             db = connector()
             cursor = db.cursor()
         
-            query = "SELECT track.id, titulo, archivo, albumId FROM track " \
+            query = "SELECT track.id, track.titulo, archivo, albumId, album.titulo, album.imagen FROM track " \
                     "INNER JOIN fav_track ON track.id = fav_track.trackId " \
+                    "INNER JOIN album ON track.albumId = album.id "\
                     "WHERE fav_track.usuarioId = %s "
 
             cursor.execute(query, (usuarioId,))
@@ -816,7 +823,9 @@ class Track_Fav:
                     'id':row[0],
                     'titulo':row[1],
                     'archivo':row[2],
-                    'albumId':row[3]
+                    'albumId':row[3],
+                    'albumTitulo':row[4],
+                    'imagen':row[5]
                 }
                 for row in cursor.fetchall()
             ]

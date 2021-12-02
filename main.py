@@ -62,14 +62,14 @@ def usuario(id = None, album_id = None):
 
 # Rutas para las caciones favoritas del usuario
 @app.route("/api/v1/usuario/<int:usuarioId>/tracks_fav", methods=["POST", "GET"])
-@app.route("/api/v1/usuario/<int:usuarioId>/tracks_fav/<int:trackId>", methods=["POST", "DELETE"])
+@app.route("/api/v1/usuario/<int:usuarioId>/tracks_fav/<int:trackId>", methods=["POST", "DELETE", "GET"])
 def canciones_favoritas(usuarioId=None, trackId=None):
     # Obtiene todas las canciones favoritas del usuario
-    if request.method == "GET" and usuarioId is not None:
-        try:
-            return jsonify(Track_Fav.get_fav_usuario(usuarioId))
-        except:
-            return jsonify({"code": "error"})
+    if request.method == "GET" and usuarioId is not None and trackId is None:
+        #try:
+        return jsonify(Track_Fav.get_fav_usuario(usuarioId))
+        # except:
+            #return jsonify({"code": "error"})
     # Agrega una canción favorita por medio de un json
     elif request.method == "POST" and usuarioId is not None and request.is_json:
         try:
@@ -81,6 +81,16 @@ def canciones_favoritas(usuarioId=None, trackId=None):
                 return jsonify({"code": "no"})
         except:
             return jsonify({"code": "error"})
+
+    elif request.method == "GET" and usuarioId is not None and trackId is not None:
+        try:
+            if Track_Fav.es_fav(usuarioId, trackId):
+                return jsonify({"code": "ok"})
+            else:
+                return jsonify({"code": "no"})
+        except:
+            return jsonify({"code": "error"})
+
     # Agrega una canción favorita por solo la URL
     elif request.method == "POST" and usuarioId is not None and trackId is not None:
         try:
