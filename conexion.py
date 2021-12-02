@@ -599,14 +599,18 @@ class Tracks:
             db = connector()
             cursor = db.cursor()
         
-            query = "SELECT id, titulo, archivo, albumId FROM track WHERE albumId IN (SELECT id FROM album WHERE usuarioId = %s)"
+            query = "SELECT track.id, track.titulo, archivo, albumId, album.titulo, album.imagen FROM track " \
+                    "INNER JOIN album ON track.albumId = album.id "\
+                    "WHERE album.usuarioId = %s "
             cursor.execute(query, (usuarioId,))
             return [
                 {
                     'id':row[0],
                     'titulo':row[1],
                     'archivo':row[2],
-                    'albumId':row[3]
+                    'albumId':row[3],
+                    'albumTitulo':row[4],
+                    'imagen':row[5]
                 }
                 for row in cursor.fetchall()
             ]
@@ -802,8 +806,9 @@ class Track_Fav:
             db = connector()
             cursor = db.cursor()
         
-            query = "SELECT track.id, titulo, archivo, albumId FROM track " \
+            query = "SELECT track.id, track.titulo, archivo, albumId, album.titulo, album.imagen FROM track " \
                     "INNER JOIN fav_track ON track.id = fav_track.trackId " \
+                    "INNER JOIN album ON track.albumId = album.id "\
                     "WHERE fav_track.usuarioId = %s "
 
             cursor.execute(query, (usuarioId,))
@@ -812,7 +817,9 @@ class Track_Fav:
                     'id':row[0],
                     'titulo':row[1],
                     'archivo':row[2],
-                    'albumId':row[3]
+                    'albumId':row[3],
+                    'albumTitulo':row[4],
+                    'imagen':row[5]
                 }
                 for row in cursor.fetchall()
             ]
