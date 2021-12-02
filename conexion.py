@@ -213,7 +213,7 @@ class Artistas:
             cursor = db.cursor()
         
             query = "SELECT biografia, nombre, imagen, usuarioId " \
-                    "FROM artista "
+                    "FROM artista WHERE id = %s "
 
             cursor.execute(query, (id,))
             row = cursor.fetchone()
