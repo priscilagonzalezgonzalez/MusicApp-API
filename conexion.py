@@ -185,7 +185,7 @@ class Artistas:
                 db.close()
 
     @classmethod
-    def insertar_artista(self, nombre):
+    def insertar_artista(self, nombre, usuarioId):
         try:
             db = connector()
             cursor = db.cursor()
@@ -193,8 +193,8 @@ class Artistas:
             if Artistas.existe_artista(nombre):
                 return False
                 
-            insertar = "INSERT INTO artista(nombre) VALUES (%s)"
-            cursor.execute(insertar, (nombre,))
+            insertar = "INSERT INTO artista(nombre, usuarioId) VALUES (%s, %s)"
+            cursor.execute(insertar, (nombre, usuarioId))
             db.commit()
 
             if cursor.rowcount > 0:
@@ -212,11 +212,8 @@ class Artistas:
             db = connector()
             cursor = db.cursor()
         
-            query = "SELECT artista.biografia, artista.nombre, artista.imagen, album.usuarioId " \
-                    "FROM artista " \
-                    "INNER JOIN album ON artista.id = album.artistaId " \
-                    "WHERE artista.id = %s " \
-                    "LIMIT 1"
+            query = "SELECT biografia, nombre, imagen, usuarioId " \
+                    "FROM artista "
 
             cursor.execute(query, (id,))
             row = cursor.fetchone()
@@ -287,8 +284,7 @@ class Artistas:
             cursor = db.cursor()
 
             query = "SELECT id, biografia, nombre, imagen " \
-                    "FROM artista WHERE artista.id IN (" \
-                        "SELECT artistaId FROM album WHERE usuarioId = %s)" \
+                    "FROM artista WHERE usuarioId = %s "
 
             cursor.execute(query, (usuarioId,))
             artistas = []
@@ -344,7 +340,7 @@ class Albums:
             if self.existe_album(titulo, nombre_artista):
                 return False
             elif not Artistas.existe_artista(nombre_artista):
-                if not Artistas.insertar_artista(nombre_artista):
+                if not Artistas.insertar_artista(nombre_artista, usuarioId):
                     return False
 
             artista_id = Artistas.get_artista_id(nombre_artista)
