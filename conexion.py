@@ -185,7 +185,7 @@ class Artistas:
                 db.close()
 
     @classmethod
-    def insertar_artista(self, nombre):
+    def insertar_artista(self, nombre, usuarioId):
         try:
             db = connector()
             cursor = db.cursor()
@@ -193,8 +193,8 @@ class Artistas:
             if Artistas.existe_artista(nombre):
                 return False
                 
-            insertar = "INSERT INTO artista(nombre) VALUES (%s)"
-            cursor.execute(insertar, (nombre,))
+            insertar = "INSERT INTO artista(nombre, usuarioId) VALUES (%s, %s)"
+            cursor.execute(insertar, (nombre, usuarioId))
             db.commit()
 
             if cursor.rowcount > 0:
@@ -212,21 +212,17 @@ class Artistas:
             db = connector()
             cursor = db.cursor()
         
-            query = "SELECT artista.id, artista.biografia, artista.nombre, artista.imagen, album.usuarioId " \
-                    "FROM artista " \
-                    "INNER JOIN album ON artista.id = album.artistaId " \
-                    "WHERE artista.id = %s " \
-                    "LIMIT 1"
+            query = "SELECT biografia, nombre, imagen, usuarioId " \
+                    "FROM artista WHERE id = %s "
 
             cursor.execute(query, (id,))
             row = cursor.fetchone()
             if cursor.rowcount > 0:
                 return {
-                    'id':row[0],
-                    'biografia':row[1],
-                    'nombre':row[2],
-                    'imagen':row[3],
-                    'usuarioId':row[4]
+                    'biografia':row[0],
+                    'nombre':row[1],
+                    'imagen':row[2],
+                    'usuarioId':row[3]
                 }
             else:
                 return None
@@ -288,8 +284,7 @@ class Artistas:
             cursor = db.cursor()
 
             query = "SELECT id, biografia, nombre, imagen " \
-                    "FROM artista WHERE artista.id IN (" \
-                        "SELECT artistaId FROM album WHERE usuarioId = %s)" \
+                    "FROM artista WHERE usuarioId = %s "
 
             cursor.execute(query, (usuarioId,))
             artistas = []
@@ -345,7 +340,7 @@ class Albums:
             if self.existe_album(titulo, nombre_artista):
                 return False
             elif not Artistas.existe_artista(nombre_artista):
-                if not Artistas.insertar_artista(nombre_artista):
+                if not Artistas.insertar_artista(nombre_artista, usuarioId):
                     return False
 
             artista_id = Artistas.get_artista_id(nombre_artista)
@@ -604,19 +599,14 @@ class Tracks:
             db = connector()
             cursor = db.cursor()
         
-            # query = "SELECT id, titulo, archivo, albumId FROM track WHERE albumId IN (SELECT id FROM album WHERE usuarioId = %s)"
-            query = "SELECT track.id, track.titulo, archivo, albumId, album.titulo, album.imagen FROM track " \
-                    "INNER JOIN album ON track.albumId = album.id "\
-                    "WHERE album.usuarioId = %s "
+            query = "SELECT id, titulo, archivo, albumId FROM track WHERE albumId IN (SELECT id FROM album WHERE usuarioId = %s)"
             cursor.execute(query, (usuarioId,))
             return [
                 {
                     'id':row[0],
                     'titulo':row[1],
                     'archivo':row[2],
-                    'albumId':row[3],
-                    'albumTitulo':row[4],
-                    'imagen':row[5]
+                    'albumId':row[3]
                 }
                 for row in cursor.fetchall()
             ]
@@ -812,9 +802,8 @@ class Track_Fav:
             db = connector()
             cursor = db.cursor()
         
-            query = "SELECT track.id, track.titulo, archivo, albumId, album.titulo, album.imagen FROM track " \
+            query = "SELECT track.id, titulo, archivo, albumId FROM track " \
                     "INNER JOIN fav_track ON track.id = fav_track.trackId " \
-                    "INNER JOIN album ON track.albumId = album.id "\
                     "WHERE fav_track.usuarioId = %s "
 
             cursor.execute(query, (usuarioId,))
@@ -823,9 +812,7 @@ class Track_Fav:
                     'id':row[0],
                     'titulo':row[1],
                     'archivo':row[2],
-                    'albumId':row[3],
-                    'albumTitulo':row[4],
-                    'imagen':row[5]
+                    'albumId':row[3]
                 }
                 for row in cursor.fetchall()
             ]
