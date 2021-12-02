@@ -1,12 +1,13 @@
-""" from main import tracks """
 import mysql.connector
 import hashlib
 
 #database connection
 def connector():
     return mysql.connector.connect(
-        user='sarahi', password='12345678',
-        database='musicapp'
+        host='sql3.freesqldatabase.com',
+        user='sql3455954', 
+        password='reuRhF8JtJ',
+        database='sql3455954'
     )
 
 def existe_columna(nombre_tabla, nombre_columna):
