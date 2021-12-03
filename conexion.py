@@ -190,7 +190,7 @@ class Artistas:
                 db.close()
 
     @classmethod
-    def insertar_artista(self, nombre, usuarioId):
+    def insertar_artista_with_name(self, nombre, usuarioId):
         try:
             db = connector()
             cursor = db.cursor()
@@ -200,6 +200,33 @@ class Artistas:
                 
             insertar = "INSERT INTO artista(nombre, usuarioId) VALUES (%s, %s)"
             cursor.execute(insertar, (nombre, usuarioId))
+            db.commit()
+
+            if cursor.rowcount > 0:
+                return True
+            else:
+                return False
+        finally:
+            if db:
+                cursor.close()
+                db.close()
+
+    @classmethod
+    def insertar_artista(self, artista):
+        try:
+            db = connector()
+            cursor = db.cursor()
+
+            nombre = artista['nombre']
+            biografia = artista['biografia']
+            imagen = artista['imagen']
+            usuarioId = artista['usuarioId']
+        
+            if Artistas.existe_artista(nombre):
+                return False
+                
+            insertar = "INSERT INTO artista(nombre, biografia, imagen, usuarioId) VALUES (%s, %s, %s, %s)"
+            cursor.execute(insertar, (nombre, biografia, imagen, usuarioId))
             db.commit()
 
             if cursor.rowcount > 0:
@@ -346,7 +373,7 @@ class Albums:
             if self.existe_album(titulo, nombre_artista):
                 return False
             elif not Artistas.existe_artista(nombre_artista):
-                if not Artistas.insertar_artista(nombre_artista, usuarioId):
+                if not Artistas.insertar_artista_with_name(nombre_artista, usuarioId):
                     return False
 
             artista_id = Artistas.get_artista_id(nombre_artista)
