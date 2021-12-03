@@ -3,11 +3,15 @@ import hashlib
 
 #database connection
 def connector():
-    return mysql.connector.connect(
+    """ return mysql.connector.connect(
         host='sql3.freesqldatabase.com',
         user='sql3455954', 
         password='reuRhF8JtJ',
         database='sql3455954'
+    ) """
+    return mysql.connector.connect(
+        user='sarahi', password='12345678',
+        database='musicapp'
     )
 
 def existe_columna(nombre_tabla, nombre_columna):
@@ -213,7 +217,7 @@ class Artistas:
             db = connector()
             cursor = db.cursor()
         
-            query = "SELECT biografia, nombre, imagen, usuarioId " \
+            query = "SELECT biografia, nombre, imagen, usuarioId, id " \
                     "FROM artista WHERE id = %s "
 
             cursor.execute(query, (id,))
@@ -223,7 +227,8 @@ class Artistas:
                     'biografia':row[0],
                     'nombre':row[1],
                     'imagen':row[2],
-                    'usuarioId':row[3]
+                    'usuarioId':row[3],
+                    'id':row[4]
                 }
             else:
                 return None
@@ -729,7 +734,7 @@ class Resenia:
             db = connector()
             cursor = db.cursor()
         
-            query = "SELECT resenia.id, resenia.texto, resenia.fecha, album.id, album.titulo, artista.nombre FROM resenia " \
+            query = "SELECT resenia.id, resenia.texto, resenia.fecha, album.id, album.titulo, artista.nombre, album.imagen FROM resenia " \
                     "INNER JOIN album ON resenia.albumId = album.id " \
                     "INNER JOIN artista ON album.artistaId = artista.id " \
                     "WHERE resenia.usuarioId = %s " 
@@ -743,7 +748,8 @@ class Resenia:
                     'album' : {
                         'id' : row[3],
                         'titulo' : row[4],
-                        'artistaNombre' : row[5]
+                        'artistaNombre' : row[5],
+                        'imagen':row[6]
                     }
                 }
                 for row in cursor.fetchall()

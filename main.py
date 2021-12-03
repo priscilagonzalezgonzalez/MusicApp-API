@@ -162,6 +162,20 @@ def albumes_favoritos(usuarioId=None, albumId=None):
     # Si no se puede procesar la solicitud, devuelve:
     return jsonify({"code": "none"})
 
+#Ruta para verificar si existe el álbum
+@app.route("/api/v1/album", methods=["POST"])
+def album():
+    if request.method == "POST" and request.is_json:
+        try:
+            data = request.get_json()
+            if Albums.existe_album(data["titulo"], data["artista"]):
+                return jsonify({"code": "ok"})
+            else:
+                return jsonify({"code": "no"})
+        except:
+            return jsonify({"code": "error"})
+
+
 #Rutas de Albumes
 @app.route("/api/v1/albumes", methods=["GET", "POST"])
 @app.route("/api/v1/albumes/<int:id>", methods=["GET"])
