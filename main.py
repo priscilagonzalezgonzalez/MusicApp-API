@@ -267,8 +267,7 @@ def artistas(id=None):
     if request.method == "POST" and request.is_json:
         try:
             data = request.get_json()
-            nombre = data['nombre']
-            if Artistas.insertar_artista(nombre):
+            if Artistas.insertar_artista(data):
                 return jsonify({"code":"ok"})
             else:
                 return jsonify({"code":"no"})
