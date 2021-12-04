@@ -3,16 +3,16 @@ import hashlib
 
 #database connection
 def connector():
-    """ return mysql.connector.connect(
+    return mysql.connector.connect(
         host='sql3.freesqldatabase.com',
         user='sql3455954', 
         password='reuRhF8JtJ',
         database='sql3455954'
-    ) """
-    return mysql.connector.connect(
+    )
+    """ return mysql.connector.connect(
         user='sarahi', password='12345678',
         database='musicapp'
-    )
+    ) """
 
 def existe_columna(nombre_tabla, nombre_columna):
     try:
