@@ -338,6 +338,29 @@ class Artistas:
                 cursor.close()
                 db.close()
 
+    
+    @classmethod
+    def eliminar_artista(self, usuarioId, artistaId):
+        try:
+            db = connector()
+            cursor = db.cursor()
+        
+            query = "DELETE from artista WHERE id = %s and usuarioId = %s"
+            cursor.execute(query, (artistaId, usuarioId))
+            db.commit()
+
+            if cursor.rowcount > 0:
+                return True
+            else:
+                return False
+        except mysql.connector.Error as e:
+            print(f"Error at <eliminar_artista>\n    query = {query}\n{str(e)}")
+            return False
+        finally:
+            if db:
+                cursor.close()
+                db.close()
+
 class Albums:
     @classmethod
     def existe_album(self, titulo, artista):

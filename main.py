@@ -259,9 +259,15 @@ def tracks_usuario(id = None):
 
 #Ruta para artistas de un usuario
 @app.route("/api/v1/usuario/<int:id>/artistas", methods = ["GET"])
-def artistas_usuario(id = None):
+@app.route("/api/v1/usuarios/<int:id>/artistas/<int:artistaId>", methods = ["DELETE"])
+def artistas_usuario(id = None, artistaId=None):
     if request.method == "GET" and id is not None:
         return jsonify(Artistas.get_artistas_usuario(id))
+    elif request.method == "DELETE" and  id is not None and artistaId is not None:
+        if Artistas.eliminar_artista(id, artistaId):
+            return jsonify({"code": "ok"})
+        else:
+            return jsonify({"code": "no"})
 
 #Ruta albumes de un artista
 @app.route("/api/v1/artistas/<int:artistaId>/albums", methods=["GET"])
