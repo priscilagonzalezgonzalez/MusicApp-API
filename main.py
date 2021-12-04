@@ -1,4 +1,5 @@
 from flask import Flask, json, request, jsonify
+from werkzeug.wrappers import response
 
 from conexion import Resenia, Track_Fav, Tracks, Usuarios, Artistas, Albums, Album_Fav
 
@@ -67,7 +68,9 @@ def canciones_favoritas(usuarioId=None, trackId=None):
     # Obtiene todas las canciones favoritas del usuario
     if request.method == "GET" and usuarioId is not None and trackId is None:
         #try:
-        return jsonify(Track_Fav.get_fav_usuario(usuarioId))
+        response = jsonify(Track_Fav.get_fav_usuario(usuarioId))
+        response.headers.add('Access-Control-Allow-Origin', '*')
+        return response
         # except:
             #return jsonify({"code": "error"})
     # Agrega una canción favorita por medio de un json
@@ -76,41 +79,63 @@ def canciones_favoritas(usuarioId=None, trackId=None):
             data = request.get_json()
             trackId = data["trackId"]
             if Track_Fav.agregar_fav(usuarioId, trackId):
-                return jsonify({"code": "ok"})
+                response =jsonify({"code": "ok"})
+                response.headers.add('Access-Control-Allow-Origin', '*')
+                return response
             else:
-                return jsonify({"code": "no"})
+                response = jsonify({"code": "no"})
+                response.headers.add('Access-Control-Allow-Origin', '*')
+                return response
         except:
-            return jsonify({"code": "error"})
+            response = jsonify({"code": "error"})
+            response.headers.add('Access-Control-Allow-Origin', '*')
+            return response
 
     elif request.method == "GET" and usuarioId is not None and trackId is not None:
         try:
             if Track_Fav.es_fav(usuarioId, trackId):
-                return jsonify({"code": "ok"})
+                response = jsonify({"code": "ok"})
+                response.headers.add('Access-Control-Allow-Origin', '*')
+                return response
             else:
-                return jsonify({"code": "no"})
+                response = jsonify({"code": "no"})
+                response.headers.add('Access-Control-Allow-Origin', '*')
+                return response
         except:
-            return jsonify({"code": "error"})
+            response = jsonify({"code": "error"})
+            response.headers.add('Access-Control-Allow-Origin', '*')
+            return response
 
     # Agrega una canción favorita por solo la URL
     elif request.method == "POST" and usuarioId is not None and trackId is not None:
         try:
             if Track_Fav.agregar_fav(usuarioId, trackId):
-                return jsonify({"code": "ok"})
+                response = jsonify({"code": "ok"})
+                response.headers.add('Access-Control-Allow-Origin', '*')
+                return response
             else:
-                return jsonify({"code": "no"})
+                response = jsonify({"code": "no"})
+                response.headers.add('Access-Control-Allow-Origin', '*')
+                return response
         except:
-            return jsonify({"code": "error"})
+            response = jsonify({"code": "error"})
+            response.headers.add('Access-Control-Allow-Origin', '*')
+            return response
     # Elimina una cancion favorita
     elif request.method == "DELETE" and usuarioId is not None and trackId is not None:
         try:
             if Track_Fav.eliminar_fav(usuarioId, trackId):
-                return jsonify({"code": "ok"})
+                response = jsonify({"code": "ok"})
+                response.headers.add('Access-Control-Allow-Origin', '*')
+                return response
             else:
-                return jsonify({"code": "no"})
+                response = jsonify({"code": "no"})
+                response.headers.add('Access-Control-Allow-Origin', '*')
+                return response
         except:
-            return jsonify({"code": "error"})
-    # Si no se puede procesar la solicitud, devuelve:
-    return jsonify({"code": "none"})
+            response = jsonify({"code": "error"})
+            response.headers.add('Access-Control-Allow-Origin', '*')
+            return response
 
 # Rutas para los albumes favoritos del usuario
 @app.route("/api/v1/usuario/<int:usuarioId>/albumes_fav", methods=["POST", "GET"])
@@ -119,48 +144,74 @@ def albumes_favoritos(usuarioId=None, albumId=None):
     # Obtiene todos los albumes favoritos del usuario
     if request.method == "GET" and usuarioId is not None and albumId is None:
         try:
-            return jsonify(Album_Fav.get_fav_usuario(usuarioId))
+            response = jsonify(Album_Fav.get_fav_usuario(usuarioId))
+            response.headers.add('Access-Control-Allow-Origin', '*')
+            return response
         except:
-            return jsonify({"code": "error"})
+            response = jsonify({"code": "error"})
+            response.headers.add('Access-Control-Allow-Origin', '*')
+            return response
     # Agrega un album a favorito por medio de un json
     elif request.method == "POST" and usuarioId is not None and request.is_json:
         try:
             data = request.get_json()
             albumId = data["albumId"]
             if Album_Fav.agregar_fav(usuarioId, albumId):
-                return jsonify({"code": "ok"})
+                response = jsonify({"code": "ok"})
+                response.headers.add('Access-Control-Allow-Origin', '*')
+                return response
             else:
-                return jsonify({"code": "no"})
+                response = jsonify({"code": "no"})
+                response.headers.add('Access-Control-Allow-Origin', '*')
+                return response
         except:
-            return jsonify({"code": "error"})
+            response = jsonify({"code": "error"})
+            response.headers.add('Access-Control-Allow-Origin', '*')
+            return response
     # Agrega un album favorito por solo la URL
     elif request.method == "POST" and usuarioId is not None and albumId is not None:
         try:
             if Album_Fav.agregar_fav(usuarioId, albumId):
-                return jsonify({"code": "ok"})
+                response = jsonify({"code": "ok"})
+                response.headers.add('Access-Control-Allow-Origin', '*')
+                return response
             else:
-                return jsonify({"code": "no"})
+                response = jsonify({"code": "no"})
+                response.headers.add('Access-Control-Allow-Origin', '*')
+                return response
         except:
-            return jsonify({"code": "error"})
+            response = jsonify({"code": "error"})
+            response.headers.add('Access-Control-Allow-Origin', '*')
+            return response
     # Elimina una album favorito
     elif request.method == "DELETE" and usuarioId is not None and albumId is not None:
         try:
             if Album_Fav.eliminar_fav(usuarioId, albumId):
-                return jsonify({"code": "ok"})
+                response = jsonify({"code": "ok"})
+                response.headers.add('Access-Control-Allow-Origin', '*')
+                return response
             else:
-                return jsonify({"code": "no"})
+                response = jsonify({"code": "no"})
+                response.headers.add('Access-Control-Allow-Origin', '*')
+                return response
         except:
-            return jsonify({"code": "error"})
+            response = jsonify({"code": "error"})
+            response.headers.add('Access-Control-Allow-Origin', '*')
+            return response
     elif request.method == "GET" and usuarioId is not None and albumId is not None:
         try:
             if Album_Fav.es_fav(usuarioId, albumId):
-                return jsonify({"code": "ok"})
+                response = jsonify({"code": "ok"})
+                response.headers.add('Access-Control-Allow-Origin', '*')
+                return response
             else:
-                return jsonify({"code": "no"})
+                response = jsonify({"code": "no"})
+                response.headers.add('Access-Control-Allow-Origin', '*')
+                return response
         except:
-            return jsonify({"code": "error"})
-    # Si no se puede procesar la solicitud, devuelve:
-    return jsonify({"code": "none"})
+            response = jsonify({"code": "error"})
+            response.headers.add('Access-Control-Allow-Origin', '*')
+            return response
 
 #Ruta para verificar si existe el álbum
 @app.route("/api/v1/album", methods=["POST"])
@@ -169,11 +220,17 @@ def album():
         try:
             data = request.get_json()
             if Albums.existe_album(data["titulo"], data["artista"]):
-                return jsonify({"code": "ok"})
+                response = jsonify({"code": "ok"})
+                response.headers.add('Access-Control-Allow-Origin', '*')
+                return response
             else:
-                return jsonify({"code": "no"})
+                response = jsonify({"code": "no"})
+                response.headers.add('Access-Control-Allow-Origin', '*')
+                return response
         except:
-            return jsonify({"code": "error"})
+            response = jsonify({"code": "error"})
+            response.headers.add('Access-Control-Allow-Origin', '*')
+            return response
 
 #Ruta para verificar si existe el artista
 @app.route("/api/v1/existe_artista", methods=["POST"])
@@ -182,11 +239,17 @@ def existe_artista():
         try:
             data = request.get_json()
             if Artistas.existe_artista(data["artista"]):
-                return jsonify({"code": "ok"})
+                response = jsonify({"code": "ok"})
+                response.headers.add('Access-Control-Allow-Origin', '*')
+                return response
             else:
-                return jsonify({"code": "no"})
+                response = jsonify({"code": "no"})
+                response.headers.add('Access-Control-Allow-Origin', '*')
+                return response
         except:
-            return jsonify({"code": "error"})
+            response = jsonify({"code": "error"})
+            response.headers.add('Access-Control-Allow-Origin', '*')
+            return response
 
 #Rutas de Albumes
 @app.route("/api/v1/albumes", methods=["GET", "POST"])
@@ -196,11 +259,17 @@ def albumes(id = None):
         try:
             data = request.get_json()
             if Albums.insertar_album(data):
-                return jsonify({"code": "ok"})
+                response = jsonify({"code": "ok"})
+                response.headers.add('Access-Control-Allow-Origin', '*')
+                return response
             else:
-                return jsonify({"code": "no"})
+                response = jsonify({"code": "no"})
+                response.headers.add('Access-Control-Allow-Origin', '*')
+                return response
         except:
-            return jsonify({"code": "error"})
+            response = jsonify({"code": "error"})
+            response.headers.add('Access-Control-Allow-Origin', '*')
+            return response
             
     elif request.method == "GET" and id is None:
         return jsonify(Albums.get_albumes())
