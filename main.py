@@ -175,6 +175,18 @@ def album():
         except:
             return jsonify({"code": "error"})
 
+#Ruta para verificar si existe el artista
+@app.route("/api/v1/existe_artista", methods=["POST"])
+def existe_artista():
+    if request.method == "POST" and request.is_json:
+        try:
+            data = request.get_json()
+            if Artistas.existe_artista(data["artista"]):
+                return jsonify({"code": "ok"})
+            else:
+                return jsonify({"code": "no"})
+        except:
+            return jsonify({"code": "error"})
 
 #Rutas de Albumes
 @app.route("/api/v1/albumes", methods=["GET", "POST"])
